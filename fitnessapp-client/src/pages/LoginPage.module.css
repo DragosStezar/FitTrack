@@ -1,0 +1,221 @@
+/* LoginPage.module.css */
+
+.pageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 120px);
+    /* Adjust based on header/footer height */
+    padding: 2rem 0;
+    background-color: #f4f7f6;
+    /* Light gray background for the page */
+}
+
+.loginBox {
+    background-color: #ffffff;
+    padding: 2.5rem 3rem;
+    /* Increased padding */
+    border-radius: 12px;
+    /* More rounded corners */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    /* Softer shadow */
+    width: 100%;
+    max-width: 450px;
+    /* Slightly wider */
+    text-align: center;
+}
+
+.logo {
+    height: 50px;
+    /* Logo size */
+    margin-bottom: 0.75rem;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.loginForm {
+    text-align: left;
+    width: 100%;
+}
+
+.inputGroup {
+    margin-bottom: 1.25rem;
+    /* Space between input groups */
+}
+
+.label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 0.5rem;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.inputIcon {
+    position: absolute;
+    left: 12px;
+    color: #999;
+    font-size: 1.1rem;
+}
+
+.input {
+    width: 100%;
+    padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+    /* Padding for icon */
+    border: 1px solid #d1d5db;
+    /* Light gray border */
+    border-radius: 6px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    /* Include padding and border in element's total width and height */
+    transition: border-color 0.2s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    /* Blue border on focus */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.optionsRow {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+}
+
+.rememberMe {
+    display: flex;
+    align-items: center;
+    color: #555;
+}
+
+.checkbox {
+    margin-right: 0.5rem;
+    accent-color: #3b82f6;
+    /* Style checkbox color */
+}
+
+.forgotPassword {
+    color: #3b82f6;
+    /* Blue link color */
+    text-decoration: none;
+}
+
+.forgotPassword:hover {
+    text-decoration: underline;
+}
+
+.errorText {
+    color: #ef4444;
+    /* Red color for errors */
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.signInButton {
+    width: 100%;
+    padding: 0.9rem;
+    /* Slightly larger padding */
+    background-color: #2d3748;
+    /* Dark background */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 1.5rem;
+    /* Space below sign in button */
+}
+
+.signInButton:hover {
+    background-color: #4a5568;
+    /* Lighter dark on hover */
+}
+
+.signInButton:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.signUpText {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 1rem;
+    /* Adjust as needed */
+    margin-bottom: 1.5rem;
+    /* Space before divider/social buttons */
+}
+
+.signUpLink {
+    color: #2d3748;
+    /* Match Sign In button background */
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.signUpLink:hover {
+    text-decoration: underline;
+    /* Keep underline on hover */
+}
+
+.divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    /* Light gray divider */
+    margin: 1.5rem 0;
+}
+
+.socialButton {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #374151;
+    /* Dark gray text */
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    margin-bottom: 0.75rem;
+    /* Space between social buttons */
+}
+
+.socialButton:hover {
+    background-color: #f9fafb;
+    /* Very light gray on hover */
+}
+
+.socialIcon {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+}
+
+/* Specific button color rules removed as they were empty or unused */

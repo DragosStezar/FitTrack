@@ -1,0 +1,155 @@
+/* Overlay - acoperă întreaga pagină */
+.modalOverlay {
+    position: fixed;
+    /* Rămâne fix la scroll */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Fundal semi-transparent */
+    display: flex;
+    align-items: center;
+    /* Centrează vertical */
+    justify-content: center;
+    /* Centrează orizontal */
+    z-index: 1000;
+    /* Asigură că e deasupra altor elemente */
+}
+
+/* Containerul conținutului modalului */
+.modalContent {
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    /* Pentru poziționarea butonului X */
+    width: 90%;
+    max-width: 550px;
+    /* Lățime maximă */
+    max-height: 90vh;
+    /* Înălțime maximă */
+    overflow-y: auto;
+    /* Scroll dacă conținutul e prea lung */
+}
+
+.modalContent h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: #333;
+    text-align: center;
+}
+
+/* Butonul de închidere (X) */
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: #aaa;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+.closeButton:hover {
+    color: #333;
+}
+
+/* Formular */
+.exerciseForm {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    /* Spațiu între grupuri/rânduri */
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    /* Spațiu între label și input */
+}
+
+.formGroup label {
+    font-weight: 500;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.formGroup input {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: #6366f1;
+    /* Culoare accent la focus */
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Rânduri pentru a grupa inputuri (ex: Sets & Reps) */
+.formRow {
+    display: flex;
+    gap: 15px;
+}
+
+.formRow>.formGroup {
+    flex: 1;
+    /* Ocupă spațiu egal */
+}
+
+/* Acțiunile formularului (butoanele) */
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    /* Aliniază la dreapta */
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    /* Linie separatoare */
+}
+
+/* Stilizare generală butoane (poate fi refactorizată într-un fișier global) */
+.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.button:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.saveButton {
+    background-color: #6366f1;
+    /* Indigo */
+    color: white;
+}
+
+.saveButton:hover {
+    background-color: #4f46e5;
+    /* Indigo mai închis */
+}
+
+.cancelButton {
+    background-color: #f1f1f1;
+    /* Gri deschis */
+    color: #555;
+    border: 1px solid #ddd;
+}
+
+.cancelButton:hover {
+    background-color: #e0e0e0;
+}

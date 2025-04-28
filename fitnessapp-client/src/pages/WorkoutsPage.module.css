@@ -1,0 +1,101 @@
+.pageContainer {
+    padding: 20px;
+    /* Alte stiluri pentru containerul paginii */
+}
+
+.contentWrapper {
+    display: flex;
+    gap: 30px;
+    /* Spațiu între coloane */
+    margin-top: 20px;
+}
+
+.calendarColumn {
+    flex: 1;
+    /* Ocupă o parte din spațiu */
+    /* Poți seta o lățime maximă dacă dorești */
+    /* max-width: 400px; */
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #fff;
+    /* Fundal alb pentru card */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Umbră subtilă */
+}
+
+.detailsColumn {
+    flex: 2;
+    /* Ocupă două părți din spațiu */
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #fff;
+    /* Fundal alb pentru card */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Umbră subtilă */
+}
+
+.pageHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.pageHeader h1 {
+    margin: 0;
+}
+
+.nutritionLinkButton,
+.premiumButton
+
+/* Noua clasă pentru butonul premium */
+    {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.premiumButton {
+    background: linear-gradient(135deg, #4338ca, #6366f1);
+    /* Gradient Indigo/Violet */
+    color: white;
+}
+
+.premiumButton:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #3730a3, #4f46e5);
+    /* Gradient mai închis la hover */
+}
+
+.nutritionLinkButton {
+    background-color: #10b981;
+    /* Verde smarald */
+    color: white;
+}
+
+.nutritionLinkButton:hover {
+    background-color: #059669;
+    /* Verde mai închis */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* Adaugă stiluri responsive dacă este necesar */
+@media (max-width: 768px) {
+    .contentWrapper {
+        flex-direction: column;
+    }
+
+    .pageHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

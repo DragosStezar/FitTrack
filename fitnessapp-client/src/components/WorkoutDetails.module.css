@@ -1,0 +1,165 @@
+.detailsContainer {
+    /* Stilizare pentru containerul principal de detalii */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    /* Separator */
+}
+
+.header h3 {
+    margin: 0;
+    font-size: 1.3em;
+    color: #333;
+}
+
+.headerActions {
+    display: flex;
+    gap: 10px;
+}
+
+.workoutContent {
+    margin-top: 15px;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.emptyState p {
+    margin: 0 0 15px 0;
+    font-size: 1.1em;
+}
+
+.noExercises {
+    color: #6c757d;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.loading,
+.error {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+}
+
+.error {
+    color: #dc3545;
+    /* Roșu pentru eroare */
+}
+
+/* Stilizare generală butoane */
+.button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.button:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.saveButton,
+.createButton {
+    background-color: #6366f1;
+    /* Indigo */
+    color: white;
+}
+
+.saveButton:hover,
+.createButton:hover {
+    background-color: #4f46e5;
+    /* Indigo mai închis */
+}
+
+.deleteButton {
+    background-color: #f8f9fa;
+    /* Fundal deschis */
+    color: #dc3545;
+    /* Text roșu */
+    border: 1px solid #f8f9fa;
+}
+
+.deleteButton:hover {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.addExerciseButton {
+    /* Modificăm stilul butonului Add Exercise */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 15px;
+    /* Padding ajustat */
+    border: none;
+    /* Eliminăm bordura */
+    border-radius: 6px;
+    background-color: #6366f1;
+    /* Folosim culoarea indigo */
+    color: white;
+    font-size: 1em;
+    /* Mărime font */
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 20px;
+}
+
+.addExerciseButton:hover {
+    background-color: #4f46e5;
+    /* Indigo mai închis la hover */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.addExerciseButton svg {
+    /* Stil specific pentru iconiță dacă e nevoie */
+    margin-right: 5px;
+}
+
+/* Păstrăm stilul pentru .addButton dacă mai e folosit undeva,
+   altfel îl putem șterge sau refactoriza. */
+.addButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #e9ecef;
+    color: #343a40;
+    margin-top: 20px;
+    width: 100%;
+    justify-content: center;
+    padding: 12px 15px;
+    border: 1px dashed #ced4da;
+    border-radius: 6px;
+    /* Adăugat radius consistent */
+    cursor: pointer;
+    /* Adăugat cursor */
+    transition: background-color 0.2s ease, border-style 0.2s ease;
+}
+
+.addButton:hover {
+    background-color: #dee2e6;
+    border-style: solid;
+}
+
+.addIcon {
+    font-size: 0.9em;
+}

@@ -1,0 +1,178 @@
+/* Layout.module.css */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #ffffff;
+    /* Fundal alb pentru navbar */
+    border-bottom: 1px solid #e0e0e0;
+    /* Linie subtire sub navbar */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #333;
+    /* Culoare text logo */
+    text-decoration: none;
+}
+
+/* Added styles for logo container and image */
+.logoContainer {
+    display: flex;
+    align-items: center;
+}
+
+.logoImage {
+    height: 40px;
+    margin-right: 0.5rem;
+}
+
+/* --- Refactored Nav Links/Buttons Styling --- */
+
+/* Common styles for both Links and Buttons in nav */
+.navLink,
+.navButton {
+    margin-left: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    border: 1px solid transparent;
+    /* Base border */
+    background-color: transparent;
+    /* Base background */
+    color: #555;
+    /* Default text color */
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    display: inline-block;
+    /* Ensure proper layout */
+}
+
+/* Specific style for links (like Login when inactive) */
+/* .navLink { */
+/* Inherits most styles from above */
+/* } */
+
+.navLink:hover {
+    color: #000;
+}
+
+/* Specific style for buttons (like Register when inactive) */
+/* .navButton { */
+/* Inherits most styles from above */
+/* Keep border transparent by default unless active */
+/* } */
+
+.navButton:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Hover effect specific to Home page */
+.navLink.homeHover:hover,
+.navButton.homeHover:hover {
+    background-color: #2d3748;
+    /* Dark background */
+    color: white;
+    /* White text */
+    border-color: #2d3748;
+}
+
+/* Active state for both Links and Buttons */
+.active {
+    background-color: #333;
+    /* Dark background like original Register button */
+    color: white !important;
+    /* White text, !important to override specificity if needed */
+    border-color: #333;
+}
+
+.active:hover {
+    background-color: #555;
+    /* Slightly lighter dark on hover for active */
+    color: white !important;
+}
+
+/* Styling for the Logout button */
+.logoutButton {
+    background-color: #f87171;
+    color: white !important;
+    border-color: transparent;
+}
+
+.logoutButton:hover {
+    background-color: #ef4444;
+    color: white !important;
+}
+
+/* --- End Refactored Styling --- */
+
+
+/* Styling for the Register button wrapped in a Link (OLD - Can be removed) */
+/*
+.navLinks a > button {
+    background-color: #333; 
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: none;
+}
+
+.navLinks a > button:hover {
+    background-color: #555;
+}
+*/
+
+/* Styling for the Logout button (OLD - Replaced by .logoutButton) */
+/*
+.navLinks > button {
+    background-color: #f87171;
+    color: white;
+}
+
+.navLinks > button:hover {
+    background-color: #ef4444;
+}
+*/
+
+
+.navLinks span {
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+    /* Add some space before the logout button */
+    color: #555;
+}
+
+.footer {
+    padding: 2rem;
+    background-color: #2d3748;
+    /* Fundal inchis pentru footer */
+    color: #e2e8f0;
+    /* Culoare text deschisa */
+    margin-top: 4rem;
+    /* Spațiu deasupra footer-ului */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footerLogo {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.footerLinks a {
+    color: #a0aec0;
+    /* Culoare link-uri mai pale */
+    text-decoration: none;
+    margin-left: 1.5rem;
+}
+
+.footerLinks a:hover {
+    color: #e2e8f0;
+}

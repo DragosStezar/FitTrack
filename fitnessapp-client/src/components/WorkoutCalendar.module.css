@@ -1,0 +1,170 @@
+/* Container general - probabil nu necesită stil specific */
+.calendarContainer {
+    width: 100%;
+}
+
+/* Containerul principal al calendarului */
+.calendarContainer :global(.react-calendar) {
+    width: 100%;
+    border: none;
+    /* Fără bordură */
+    background: none;
+    /* Fără fundal default, moștenește fundalul părintelui (#fff din .calendarColumn) */
+    font-family: inherit;
+    padding: 0;
+    /* Scoatem padding-ul intern dacă există */
+}
+
+/* Navigare Lună */
+.calendarContainer :global(.react-calendar__navigation) {
+    display: flex;
+    align-items: center;
+    /* Centrează vertical */
+    margin-bottom: 1em;
+    padding: 5px 0;
+    /* Padding vertical mic */
+}
+
+.calendarContainer :global(.react-calendar__navigation button) {
+    background: none;
+    border: none;
+    color: #555;
+    /* Gri închis */
+    font-size: 1.1em;
+    padding: 5px;
+    min-width: 30px;
+    /* Lățime minimă pentru click */
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.calendarContainer :global(.react-calendar__navigation button:hover) {
+    color: #000;
+    /* Negru la hover */
+}
+
+.calendarContainer :global(.react-calendar__navigation button:disabled) {
+    color: #ccc;
+    /* Gri foarte deschis pentru dezactivat */
+    cursor: default;
+}
+
+.calendarContainer :global(.react-calendar__navigation__label) {
+    font-weight: 600;
+    /* Puțin bold */
+    color: #333;
+    /* Gri foarte închis */
+    flex-grow: 1 !important;
+    /* Ocupă spațiul */
+    text-align: center;
+    /* Centrează textul lunii */
+    cursor: default;
+    /* Fără efect de click pe nume lună */
+}
+
+.calendarContainer :global(.react-calendar__navigation__label:hover),
+.calendarContainer :global(.react-calendar__navigation__label:focus) {
+    background: none;
+    /* Scoate fundalul la hover/focus pe label */
+}
+
+/* Zilele săptămânii (Mo, Tu...) */
+.calendarContainer :global(.react-calendar__month-view__weekdays) {
+    text-align: center;
+    font-weight: 500;
+    /* Puțin mai puțin bold */
+    color: #888;
+    /* Gri mediu */
+    margin-bottom: 0.5em;
+    font-size: 0.85em;
+}
+
+.calendarContainer :global(.react-calendar__month-view__weekdays__weekday abbr) {
+    text-decoration: none;
+    /* Fără subliniere */
+}
+
+/* Tile-urile (zilele) */
+.calendarContainer :global(.react-calendar__tile) {
+    max-width: 100%;
+    padding: 0.6em 0.5em;
+    /* Ajustează padding */
+    background: none;
+    text-align: center;
+    border: none;
+    border-radius: 50%;
+    /* Face toate zilele circulare */
+    line-height: 1.3em;
+    /* Ajustează înălțimea liniei */
+    font-size: 0.9em;
+    /* Mărime font zile */
+    color: #444;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.calendarContainer :global(.react-calendar__tile:hover) {
+    background-color: #f0f0f0;
+    /* Fundal gri foarte deschis la hover */
+}
+
+/* Ziua selectată */
+.calendarContainer :global(.react-calendar__tile--active) {
+    background: #6366f1;
+    /* Un indigo/violet (ajustează la tema ta) */
+    color: white;
+    font-weight: bold;
+}
+
+.calendarContainer :global(.react-calendar__tile--active:hover) {
+    background: #4f46e5;
+    /* Mai închis la hover */
+}
+
+/* Ziua curentă (azi) */
+.calendarContainer :global(.react-calendar__tile--now) {
+    background: #eef2ff;
+    /* Un indigo foarte deschis */
+    /* Sau doar un cerc: */
+    /* background: none; */
+    /* border: 1px solid #a5b4fc; */
+    font-weight: bold;
+}
+
+.calendarContainer :global(.react-calendar__tile--now:hover) {
+    background: #c7d2fe;
+    /* Mai închis la hover */
+}
+
+/* Zile din afara lunii */
+.calendarContainer :global(.react-calendar__month-view__days__day--neighboringMonth) {
+    color: #bbb;
+    /* Gri și mai deschis */
+}
+
+/* Clasa custom pentru zilele cu antrenament - minimalist */
+.workoutDay {
+    /* Folosim un pseudo-element pentru un punct dedesubt */
+    position: relative;
+}
+
+.workoutDay::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 5px;
+    /* Ajustează poziția punctului */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background-color: #6366f1;
+    /* Culoarea accentului */
+    border-radius: 50%;
+}
+
+/* Ajustează punctul pentru ziua selectată */
+.calendarContainer :global(.react-calendar__tile--active).workoutDay::after {
+    background-color: white;
+    /* Punct alb pe fundalul activ */
+}
