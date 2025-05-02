@@ -8,9 +8,8 @@ namespace FitnessApp.Api.Models
         public Guid ExerciseId { get; set; }
         public int SetNumber { get; set; }
         public string Repetitions { get; set; } = string.Empty;
-        public double Weight { get; set; } // Use double for potential fractional weights
+        public double Weight { get; set; }
 
-        // Navigation property
         public virtual Exercise Exercise { get; set; } = null!;
     }
 }

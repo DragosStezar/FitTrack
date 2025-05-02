@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './AddEditExerciseModal.module.css';
 
-// isOpen: boolean - controlează vizibilitatea modalului
-// onClose: function - funcție apelată la închidere (X, Cancel, overlay click)
-// onSubmit: function - funcție apelată la salvare, trimite datele exercițiului
-// exerciseToEdit: object | null - datele exercițiului pentru pre-populare în mod editare
 
 function AddEditExerciseModal({ isOpen, onClose, onSubmit, exerciseToEdit }) {
     // State local pentru câmpurile formularului

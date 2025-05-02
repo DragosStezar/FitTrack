@@ -3,6 +3,7 @@ using System;
 using FitnessApp.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessApp.Api.Migrations
 {
     [DbContext(typeof(FitnessAppDbContext))]
-    partial class FitnessAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250502084337_AddUserProfileAndEnums")]
+    partial class AddUserProfileAndEnums
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
@@ -174,10 +177,10 @@ namespace FitnessApp.Api.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("HeightCm")
-                        .HasColumnType("REAL");
+                    b.Property<int>("Goal")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<double?>("TargetWeightKg")
+                    b.Property<double>("HeightCm")
                         .HasColumnType("REAL");
 
                     b.Property<double>("WeightKg")

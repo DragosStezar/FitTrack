@@ -20,6 +20,6 @@ namespace FitnessApp.Api.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public virtual ICollection<TrainingSession> TrainingSessions { get; set; } = new List<TrainingSession>();
         public virtual NutritionalGoal? NutritionalGoal { get; set; }
-        public bool IsPremium { get; set; } = false;
+        public virtual UserProfile? UserProfile { get; set; }
     }
 }

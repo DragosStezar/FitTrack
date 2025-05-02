@@ -28,7 +28,6 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// Add CORS services
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -38,21 +37,19 @@ builder.Services.AddCors(options =>
                         policy.WithOrigins(frontendDomain)
                             .AllowAnyHeader()
                             .AllowAnyMethod()
-                            .AllowCredentials(); // Adăugăm AllowCredentials pentru cookie-uri
+                            .AllowCredentials();
                     });
 });
 
-// Add DbContext configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FitnessAppDbContext>(options =>
     options.UseSqlite(connectionString));
 
 builder.Services.AddControllers();
 
-// Register StripeService
 builder.Services.AddScoped<StripeService>();
+builder.Services.AddScoped<NutritionService>();
 
-// Add JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -83,23 +80,19 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
     options.CallbackPath = "/signin-google";  // must match Google Cloud Authorized redirect URI
 
-    // Setări explicite pentru cookie-ul de corelare
     options.CorrelationCookie.SameSite = SameSiteMode.Lax;
     options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
     options.SaveTokens = true;
 
-    // Adăugăm evenimente pentru procesarea autentificării
     options.Events = new OAuthEvents
     {
         OnTicketReceived = async context =>
         {
-            // Obținem serviciile necesare
             var dbContext = context.HttpContext.RequestServices.GetRequiredService<FitnessAppDbContext>();
             var configuration = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
             var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
             var logger = loggerFactory.CreateLogger("GoogleAuthEvents");
 
-            // Obținem informațiile utilizatorului
             var email = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
             var name = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
 
@@ -111,11 +104,9 @@ builder.Services.AddAuthentication(options =>
                 return;
             }
 
-            // Căutăm sau creăm utilizatorul
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
-                // Creăm un utilizator nou
                 user = new FitnessApp.Api.Models.User
                 {
                     Email = email,
@@ -127,7 +118,6 @@ builder.Services.AddAuthentication(options =>
                 logger.LogInformation($"Created new user with ID {user.Id}");
             }
 
-            // Generăm token JWT
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -136,14 +126,12 @@ builder.Services.AddAuthentication(options =>
                 new System.Security.Claims.Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new System.Security.Claims.Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new System.Security.Claims.Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
-                // Folosim rolul real al utilizatorului
                 new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, user.Type.ToString())
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                // Revenim la durata originală (sau o lași 24h dacă dorești)
                 Expires = DateTime.UtcNow.AddHours(1),
                 Issuer = configuration["Jwt:Issuer"],
                 Audience = configuration["Jwt:Audience"],
@@ -154,7 +142,6 @@ builder.Services.AddAuthentication(options =>
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            // Redirecționăm către frontend cu token
             var frontendDomain = configuration["FrontendDomain"];
             var redirectUrl = $"{frontendDomain}/auth-callback?token={tokenString}";
 

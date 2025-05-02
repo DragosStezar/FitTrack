@@ -4,8 +4,8 @@ namespace FitnessApp.Api.Models
 {
     public enum GoalType
     {
-        WeightLoss, // Slabire
-        MassGain    // Crestere masa musculara
+        WeightLoss,
+        MassGain
     }
 
     public class NutritionalGoal
@@ -14,15 +14,12 @@ namespace FitnessApp.Api.Models
         public Guid UserId { get; set; }
         public GoalType Type { get; set; }
 
-        // Nutritional targets
         public double TargetCalories { get; set; }
         public double TargetProteinGrams { get; set; }
         public double TargetCarbohydrateGrams { get; set; }
         public double TargetFatGrams { get; set; }
 
         public DateTime SetAt { get; set; } = DateTime.UtcNow;
-
-        // Navigation property
         public virtual User User { get; set; } = null!;
     }
 }

@@ -119,7 +119,7 @@ namespace FitnessApp.Api.Controllers
 
                             if (user != null)
                             {
-                                user.IsPremium = true;
+                                user.Type = UserType.Premium;
 
                                 _context.Users.Update(user);
                                 await _context.SaveChangesAsync();

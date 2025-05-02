@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
             return null;
         }
     });
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     // Effect to update axios headers when token changes - ACUM FOLOSEȘTE axiosInstance!
@@ -38,6 +39,53 @@ export const AuthProvider = ({ children }) => {
             delete axiosInstance.defaults.headers.common['Authorization'];
         }
     }, [authToken]);
+
+    // Logout function - încadrat în useCallback
+    const logout = useCallback(() => {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userInfo');
+        setAuthToken(null);
+        setUserInfo(null);
+        // Stergem header-ul la logout
+        delete axiosInstance.defaults.headers.common['Authorization'];
+        navigate('/login');
+        // Dependințe: navigate
+    }, [navigate]);
+
+    // Funcție nouă pentru a reîncărca datele utilizatorului
+    const refreshUserInfo = useCallback(async () => {
+        const currentToken = localStorage.getItem('authToken');
+        if (!currentToken) {
+            console.log("[refreshUserInfo] No auth token found in localStorage.");
+            delete axiosInstance.defaults.headers.common['Authorization'];
+            return; // Nu setăm isLoading dacă nu facem request
+        }
+
+        setIsLoading(true); // <-- Setăm isLoading true la început
+
+        // Setăm explicit header-ul pe instanță ÎNAINTE de request
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${currentToken}`;
+
+        try {
+            const response = await axiosInstance.get('/auth/me');
+            if (response.data) {
+                const newUserInfo = {
+                    username: response.data.username,
+                    email: response.data.email,
+                    userType: response.data.userType,
+                    userId: response.data.userId
+                };
+                localStorage.setItem('userInfo', JSON.stringify(newUserInfo));
+                setUserInfo(newUserInfo);
+            } else {
+                console.error('Refresh user info successful, but no data received.');
+            }
+        } catch (error) {
+            console.error('[refreshUserInfo] Error caught during refresh:', error);
+        } finally {
+            setIsLoading(false); // <-- Setăm isLoading false indiferent de rezultat
+        }
+    }, [logout]); // `logout` este dependență pentru cazul 401 din interceptor
 
     // Login function - ACUM FOLOSEȘTE axiosInstance!
     const login = useCallback(async (loginCredentials) => {
@@ -126,24 +174,16 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // Logout function - încadrat în useCallback
-    const logout = useCallback(() => {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userInfo');
-        setAuthToken(null);
-        setUserInfo(null);
-        navigate('/login');
-        // Dependințe: navigate, funcțiile setState
-    }, [navigate/* , setAuthToken, setUserInfo */]);
-
     // Value provided by the context
     const value = {
         authToken,
         userInfo,
+        isLoading,
         isLoggedIn: !!authToken,
         login,
         logout,
-        handleExternalLogin
+        handleExternalLogin,
+        refreshUserInfo
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

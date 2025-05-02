@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import WorkoutsPage from './pages/WorkoutsPage'; // Importă noua pagină
 import AuthCallback from './components/AuthCallback'; // Importă componenta de callback
 import NutritionPage from './pages/NutritionPage'; // <-- Importă pagina de nutriție
+import ProtectedRoute from './components/ProtectedRoute'; // <-- Importă ProtectedRoute
 // Import other pages later
 
 function App() {
@@ -23,7 +24,14 @@ function App() {
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="workouts" element={<WorkoutsPage />} /> {/* Adaugă ruta pentru workouts */}
-        <Route path="nutrition" element={<NutritionPage />} /> {/* <-- Adaugă ruta pentru nutriție */}
+        <Route
+          path="nutrition"
+          element={
+            <ProtectedRoute>
+              <NutritionPage />
+            </ProtectedRoute>
+          }
+        />
         {/* Add other routes: Dashboard, Training, etc. */}
 
         {/* Catch-all route for 404 Not Found (optional) */}

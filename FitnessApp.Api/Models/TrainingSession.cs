@@ -8,9 +8,7 @@ namespace FitnessApp.Api.Models
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public DateTime Date { get; set; }
-        public string? Notes { get; set; } // Optional notes for the session
-
-        // Navigation properties
+        public string? Notes { get; set; }
         public virtual User User { get; set; } = null!;
         public virtual ICollection<Exercise> Exercises { get; set; } = new List<Exercise>();
     }

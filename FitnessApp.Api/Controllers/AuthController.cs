@@ -13,6 +13,7 @@ using System.Text;
 using System;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FitnessApp.Api.Controllers
 {
@@ -159,6 +160,55 @@ namespace FitnessApp.Api.Controllers
             // Adăugăm un return default pentru a satisface compilatorul,
             // deși acest cod nu ar trebui să fie atins în configurația curentă.
             return NotFound("Callback endpoint not configured for direct use in this scenario.");
+        }
+
+        // Nou endpoint pentru a prelua datele utilizatorului autentificat
+        [HttpGet("me")]
+        [Authorize] // <-- Necesită autentificare
+        public async Task<ActionResult<UserDetailsDto>> GetMe()
+        {
+            // Extragem ID-ul utilizatorului din claim-ul corect: NameIdentifier
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // === DEBUG: Logăm valoarea claim-ului sub ===
+            // Console.WriteLine($"---> [GetMe] Received token. User claims:");
+            // foreach (var claim in User.Claims)
+            // {
+            //     Console.WriteLine($"---> [GetMe] Claim: {claim.Type} = {claim.Value}");
+            // }
+            // Console.WriteLine($"---> [GetMe] Extracted 'sub' claim value: '{userIdString}'");
+            // ============================================
+
+            if (!Guid.TryParse(userIdString, out var userId))
+            {
+                // Acest caz nu ar trebui să se întâmple dacă token-ul este valid și emis corect
+                // Console.WriteLine("---> [GetMe] Failed to parse 'sub' claim as Guid."); // DEBUG Log - Eliminat
+                return Unauthorized("Invalid user identifier in token.");
+            }
+
+            // === DEBUG: Logăm ID-ul parsat ===
+            // Console.WriteLine($"---> [GetMe] Successfully parsed Guid: {userId}");
+            // ==================================
+
+            // Căutăm utilizatorul în baza de date după ID
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                // Utilizatorul din token nu (mai) există în BD
+                return NotFound("User not found.");
+            }
+
+            // Mapăm datele utilizatorului la DTO
+            var userDetails = new UserDetailsDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                UserType = user.Type.ToString() // Returnăm tipul ca string (Basic/Premium)
+            };
+
+            return Ok(userDetails);
         }
     }
 }

@@ -15,10 +15,18 @@ namespace FitnessApp.Api.Data
         public DbSet<Exercise> Exercises { get; set; } = null!;
         public DbSet<ExerciseSet> ExerciseSets { get; set; } = null!;
         public DbSet<NutritionalGoal> NutritionalGoals { get; set; } = null!;
+        public DbSet<UserProfile> UserProfiles { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Relație unu-la-unu între User și UserProfile
+            // User are un UserProfile opțional (?), UserProfile are un User necesar (!)
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.UserProfile)       // User has one UserProfile
+                .WithOne(up => up.User)           // UserProfile belongs to one User
+                .HasForeignKey<UserProfile>(up => up.UserId); // FK este în UserProfile
 
             // Configure relationships and constraints here if needed
             // Example: One-to-one relationship between User and NutritionalGoal

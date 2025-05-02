@@ -3,6 +3,7 @@ using System;
 using FitnessApp.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FitnessApp.Api.Migrations
 {
     [DbContext(typeof(FitnessAppDbContext))]
-    partial class FitnessAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250502075553_RemoveIsPremiumFromUser")]
+    partial class RemoveIsPremiumFromUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
@@ -160,34 +163,6 @@ namespace FitnessApp.Api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("FitnessApp.Api.Models.UserProfile", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ActivityLevel")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Age")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("HeightCm")
-                        .HasColumnType("REAL");
-
-                    b.Property<double?>("TargetWeightKg")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("WeightKg")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("UserProfiles");
-                });
-
             modelBuilder.Entity("FitnessApp.Api.Models.Exercise", b =>
                 {
                     b.HasOne("FitnessApp.Api.Models.TrainingSession", "TrainingSession")
@@ -232,17 +207,6 @@ namespace FitnessApp.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FitnessApp.Api.Models.UserProfile", b =>
-                {
-                    b.HasOne("FitnessApp.Api.Models.User", "User")
-                        .WithOne("UserProfile")
-                        .HasForeignKey("FitnessApp.Api.Models.UserProfile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("FitnessApp.Api.Models.Exercise", b =>
                 {
                     b.Navigation("Sets");
@@ -258,8 +222,6 @@ namespace FitnessApp.Api.Migrations
                     b.Navigation("NutritionalGoal");
 
                     b.Navigation("TrainingSessions");
-
-                    b.Navigation("UserProfile");
                 });
 #pragma warning restore 612, 618
         }
