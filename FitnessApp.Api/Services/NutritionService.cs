@@ -16,9 +16,15 @@ namespace FitnessApp.Api.Services
 
         private const double FAT_CALORIE_PERCENTAGE = 0.25;
 
-        // Ajustare calorică pentru scop (deficit/surplus)
-        private const double WEIGHT_LOSS_CALORIE_ADJUSTMENT = -500;
-        private const double WEIGHT_GAIN_CALORIE_ADJUSTMENT = 300;
+        private const double BASE_GAIN_KG_THRESHOLD = 5.0;
+        private const double BASE_GAIN_TDEE_PERCENTAGE = 0.10;
+        private const double ADDITIONAL_GAIN_TDEE_PERCENTAGE_PER_KG = 0.005;
+        private const double MAX_TOTAL_GAIN_TDEE_PERCENTAGE = 0.25;
+
+        private const double BASE_LOSS_KG_THRESHOLD = 5.0;
+        private const double BASE_LOSS_TDEE_PERCENTAGE = -0.10;
+        private const double ADDITIONAL_LOSS_TDEE_PERCENTAGE_PER_KG = -0.005;
+        private const double MAX_TOTAL_LOSS_TDEE_PERCENTAGE = -0.25;
 
         public CalculatedNutritionDto CalculateNutritionalNeeds(UserProfile profile)
         {
@@ -31,21 +37,45 @@ namespace FitnessApp.Api.Services
             double tdee = CalculateTdee(bmr, profile.ActivityLevel);
 
             Goal derivedGoal = Goal.Maintenance;
-            double calorieAdjustment = 0;
-            if (profile.TargetWeightKg.HasValue)
+            double totalAdjustmentPercentage = 0;
+
+            if (profile.TargetWeightKg.HasValue && profile.TargetWeightKg != profile.WeightKg)
             {
-                if (profile.TargetWeightKg < profile.WeightKg)
-                {
-                    derivedGoal = Goal.WeightLoss;
-                    calorieAdjustment = WEIGHT_LOSS_CALORIE_ADJUSTMENT;
-                }
-                else if (profile.TargetWeightKg > profile.WeightKg)
+                double weightDifferenceKg = profile.TargetWeightKg.Value - profile.WeightKg;
+
+                if (weightDifferenceKg > 0)
                 {
                     derivedGoal = Goal.WeightGain;
-                    calorieAdjustment = WEIGHT_GAIN_CALORIE_ADJUSTMENT;
+                    if (weightDifferenceKg <= BASE_GAIN_KG_THRESHOLD)
+                    {
+                        totalAdjustmentPercentage = BASE_GAIN_TDEE_PERCENTAGE;
+                    }
+                    else
+                    {
+                        double additionalKg = weightDifferenceKg - BASE_GAIN_KG_THRESHOLD;
+                        totalAdjustmentPercentage = BASE_GAIN_TDEE_PERCENTAGE + (additionalKg * ADDITIONAL_GAIN_TDEE_PERCENTAGE_PER_KG);
+                    }
+                    totalAdjustmentPercentage = Math.Min(totalAdjustmentPercentage, MAX_TOTAL_GAIN_TDEE_PERCENTAGE);
+                }
+                else
+                {
+                    derivedGoal = Goal.WeightLoss;
+                    double positiveWeightDifference = Math.Abs(weightDifferenceKg); // Make it positive for calculation
+
+                    if (positiveWeightDifference <= BASE_LOSS_KG_THRESHOLD)
+                    {
+                        totalAdjustmentPercentage = BASE_LOSS_TDEE_PERCENTAGE;
+                    }
+                    else
+                    {
+                        double additionalKg = positiveWeightDifference - BASE_LOSS_KG_THRESHOLD;
+                        totalAdjustmentPercentage = BASE_LOSS_TDEE_PERCENTAGE + (additionalKg * ADDITIONAL_LOSS_TDEE_PERCENTAGE_PER_KG); // Note: ADDITIONAL_LOSS_TDEE_PERCENTAGE_PER_KG is negative
+                    }
+                    totalAdjustmentPercentage = Math.Max(totalAdjustmentPercentage, MAX_TOTAL_LOSS_TDEE_PERCENTAGE);
                 }
             }
 
+            double calorieAdjustment = tdee * totalAdjustmentPercentage;
             double goalCalories = tdee + calorieAdjustment;
 
             double proteinGrams = CalculateProteinGrams(profile.WeightKg, derivedGoal);
