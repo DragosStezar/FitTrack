@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
-import { useAuth } from '../context/AuthContext'; // Importăm useAuth
+import { useAuth } from '../context/AuthContext';
 import styles from './RegisterPage.module.css';
 import logoImage from '../assets/dumbbell-logo.png';
 import { FaGoogle } from 'react-icons/fa';
@@ -15,7 +15,7 @@ function RegisterPage() {
     const [successMessage, setSuccessMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { handleExternalLogin } = useAuth(); // Obținem funcția din context
+    const { handleExternalLogin } = useAuth();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -30,26 +30,20 @@ function RegisterPage() {
                 password: password
             });
 
-            // Verificăm dacă am primit token
             if (response.data && response.data.token) {
                 console.log('Registration successful, token received.');
-                // Folosim funcția din context pentru a stoca token-ul și datele utilizatorului
                 const loginSuccess = handleExternalLogin(response.data.token);
 
                 if (loginSuccess) {
                     setSuccessMessage('Registration successful! Redirecting...');
-                    // Curățăm formularul
                     setUsername('');
                     setEmail('');
                     setPassword('');
-                    // Redirecționăm după un scurt delay
                     setTimeout(() => navigate('/workouts', { replace: true }), 1500);
                 } else {
-                    // Eroare la procesarea token-ului în context
                     setError('Registration successful, but failed to log you in. Please try logging in manually.');
                 }
             } else {
-                // Răspuns neașteptat de la server
                 setError('Registration completed, but no authentication token received. Please try logging in manually.');
             }
 
@@ -62,7 +56,6 @@ function RegisterPage() {
     };
 
     const handleGoogleLogin = () => {
-        // Folosim calea relativă pentru a folosi proxy-ul Vite
         const googleLoginPath = '/api/auth/google-login';
         console.log('Redirecting to Google login via proxy:', googleLoginPath);
         window.location.href = googleLoginPath;

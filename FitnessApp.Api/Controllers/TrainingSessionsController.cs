@@ -1,39 +1,34 @@
 using FitnessApp.Api.Data;
 using FitnessApp.Api.Dtos;
 using FitnessApp.Api.Models;
-using Microsoft.AspNetCore.Authorization; // Added for [Authorize]
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims; // Added for User Claims
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FitnessApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // Require authentication for all actions in this controller
+    [Authorize]
     public class TrainingSessionsController : ControllerBase
     {
         private readonly FitnessAppDbContext _context;
-        // Inject ILogger for better error logging (optional but recommended)
-        // private readonly ILogger<TrainingSessionsController> _logger;
 
-        public TrainingSessionsController(FitnessAppDbContext context /*, ILogger<TrainingSessionsController> logger*/)
+        public TrainingSessionsController(FitnessAppDbContext context)
         {
             _context = context;
-            // _logger = logger;
         }
 
-        // Helper method to get current user ID from JWT claims
         private Guid GetCurrentUserId()
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
             if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
             {
-                // This should not happen if [Authorize] is working correctly
                 throw new InvalidOperationException("User ID not found in token.");
             }
             return userId;
@@ -53,21 +48,16 @@ namespace FitnessApp.Api.Controllers
                 {
                     Name = exDto.Name,
                     Notes = exDto.Notes,
-                    // Creează seturile pe baza datelor din DTO
-                    Sets = Enumerable.Range(1, exDto.Sets > 0 ? exDto.Sets : 1) // Generează numere de la 1 la exDto.Sets (minim 1)
+                    Sets = Enumerable.Range(1, exDto.Sets > 0 ? exDto.Sets : 1)
                                      .Select(setNum =>
                                      {
-                                         // --- Remove DEBUG LOGGING and parsing ---
-                                         Console.WriteLine($"[DEBUG] Creating Set {setNum} for Exercise '{exDto.Name}'"); // Keep for now
-                                         // bool repsParsed = int.TryParse(exDto.Reps?.Trim(), out int reps); // Remove parsing
-                                         bool weightParsed = double.TryParse(exDto.Weight?.Trim(), out double weight); // Keep weight parsing
-                                         // Console.WriteLine($"[DEBUG]   Reps Parsed: {repsParsed}, Value: {(repsParsed ? reps : 0)}");
+                                         Console.WriteLine($"[DEBUG] Creating Set {setNum} for Exercise '{exDto.Name}'");
+                                         bool weightParsed = double.TryParse(exDto.Weight?.Trim(), out double weight);
                                          Console.WriteLine($"[DEBUG]   Weight Parsed: {weightParsed}, Value: {(weightParsed ? weight : 0.0)}");
 
                                          return new ExerciseSet
                                          {
-                                             SetNumber = setNum, // Folosește numărul generat
-                                             // Assign string directly, ensuring it's not null
+                                             SetNumber = setNum,
                                              Repetitions = exDto.Reps?.Trim() ?? string.Empty,
                                              Weight = weightParsed ? weight : 0.0
                                          };
@@ -80,23 +70,20 @@ namespace FitnessApp.Api.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException /* ex */)
+            catch (DbUpdateException)
             {
                 return StatusCode(500, "An error occurred while saving the training session.");
             }
 
-            // Returnăm DTO-ul detaliat, inclusiv exercițiile create (cu ID-uri)
-            // Trebuie să re-citim din context pentru a include ID-urile generate
             var createdSession = await _context.TrainingSessions
                 .Include(ts => ts.Exercises)
                     .ThenInclude(e => e.Sets)
                 .Where(ts => ts.Id == newSession.Id)
-                .Select(MapToDetailDto()) // Folosim o funcție de mapare
+                .Select(MapToDetailDto())
                 .FirstOrDefaultAsync();
 
             if (createdSession == null)
             {
-                // Ceva a mers foarte prost dacă nu o găsim imediat după creare
                 return StatusCode(500, "Failed to retrieve created session.");
             }
 
@@ -136,8 +123,8 @@ namespace FitnessApp.Api.Controllers
 
             var sessions = await _context.TrainingSessions
                 .Where(ts => ts.UserId == userId)
-                .OrderByDescending(ts => ts.Date) // Order by date, newest first
-                .Select(ts => new TrainingSessionDto // Project to DTO
+                .OrderByDescending(ts => ts.Date)
+                .Select(ts => new TrainingSessionDto
                 {
                     Id = ts.Id,
                     Date = ts.Date,
@@ -155,10 +142,10 @@ namespace FitnessApp.Api.Controllers
             var userId = GetCurrentUserId();
 
             var session = await _context.TrainingSessions
-                .Include(ts => ts.Exercises) // Include Exercises
-                    .ThenInclude(e => e.Sets) // Then include Sets within Exercises
-                .Where(ts => ts.Id == id && ts.UserId == userId) // Ensure user owns the session
-                .Select(ts => new TrainingSessionDetailDto // Project to Detail DTO
+                .Include(ts => ts.Exercises)
+                    .ThenInclude(e => e.Sets)
+                .Where(ts => ts.Id == id && ts.UserId == userId)
+                .Select(ts => new TrainingSessionDetailDto
                 {
                     Id = ts.Id,
                     Date = ts.Date,
@@ -168,7 +155,7 @@ namespace FitnessApp.Api.Controllers
                         Id = e.Id,
                         Name = e.Name,
                         Notes = e.Notes,
-                        Sets = e.Sets.OrderBy(s => s.SetNumber).Select(s => new ExerciseSetDto // Order sets by number
+                        Sets = e.Sets.OrderBy(s => s.SetNumber).Select(s => new ExerciseSetDto
                         {
                             Id = s.Id,
                             SetNumber = s.SetNumber,
@@ -187,15 +174,12 @@ namespace FitnessApp.Api.Controllers
             return Ok(session);
         }
 
-        // --- Exercises Endpoints ---
-
         // POST: api/trainingsessions/{sessionId}/exercises
         [HttpPost("{sessionId}/exercises")]
         public async Task<ActionResult<ExerciseDto>> AddExerciseToSession(Guid sessionId, ExerciseCreateDto createDto)
         {
             var userId = GetCurrentUserId();
 
-            // Verify the session exists and belongs to the user
             var session = await _context.TrainingSessions
                                     .FirstOrDefaultAsync(ts => ts.Id == sessionId && ts.UserId == userId);
 
@@ -214,7 +198,6 @@ namespace FitnessApp.Api.Controllers
             _context.Exercises.Add(newExercise);
             await _context.SaveChangesAsync();
 
-            // Map to DTO (without sets initially, as it's new)
             var exerciseDto = new ExerciseDto
             {
                 Id = newExercise.Id,
@@ -222,7 +205,6 @@ namespace FitnessApp.Api.Controllers
                 Notes = newExercise.Notes
             };
 
-            // Return 201 Created with the location (optional, could create a GetExerciseById method)
             return CreatedAtAction(nameof(GetExerciseById), new { sessionId = sessionId, exerciseId = newExercise.Id }, exerciseDto);
         }
 
@@ -232,16 +214,15 @@ namespace FitnessApp.Api.Controllers
         {
             var userId = GetCurrentUserId();
 
-            // Verify the session exists and belongs to the user first
             if (!await _context.TrainingSessions.AnyAsync(ts => ts.Id == sessionId && ts.UserId == userId))
             {
                 return NotFound("Training session not found or access denied.");
             }
 
             var exercises = await _context.Exercises
-                .Include(e => e.Sets) // Include Sets
+                .Include(e => e.Sets)
                 .Where(e => e.TrainingSessionId == sessionId)
-                .Select(e => new ExerciseDto // Project to DTO
+                .Select(e => new ExerciseDto
                 {
                     Id = e.Id,
                     Name = e.Name,
@@ -260,7 +241,6 @@ namespace FitnessApp.Api.Controllers
         }
 
         // GET: api/trainingsessions/{sessionId}/exercises/{exerciseId}
-        // (Helper endpoint for CreatedAtAction location)
         [HttpGet("{sessionId}/exercises/{exerciseId}")]
         public async Task<ActionResult<ExerciseDto>> GetExerciseById(Guid sessionId, Guid exerciseId)
         {
@@ -293,7 +273,6 @@ namespace FitnessApp.Api.Controllers
         }
 
 
-        // --- Exercise Sets Endpoints ---
 
         // POST: api/trainingsessions/{sessionId}/exercises/{exerciseId}/sets
         [HttpPost("{sessionId}/exercises/{exerciseId}/sets")]
@@ -301,7 +280,6 @@ namespace FitnessApp.Api.Controllers
         {
             var userId = GetCurrentUserId();
 
-            // Verify the exercise exists, belongs to the session, and the session belongs to the user
             var exercise = await _context.Exercises
                                    .FirstOrDefaultAsync(e => e.Id == exerciseId && e.TrainingSessionId == sessionId && e.TrainingSession.UserId == userId);
 
@@ -314,8 +292,8 @@ namespace FitnessApp.Api.Controllers
             {
                 ExerciseId = exerciseId,
                 SetNumber = createDto.SetNumber,
-                Repetitions = createDto.Repetitions?.Trim() ?? string.Empty, // Assign string directly
-                Weight = createDto.Weight // Assume Weight in createDto is already double
+                Repetitions = createDto.Repetitions?.Trim() ?? string.Empty,
+                Weight = createDto.Weight
             };
 
             _context.ExerciseSets.Add(newSet);
@@ -329,14 +307,8 @@ namespace FitnessApp.Api.Controllers
                 Weight = newSet.Weight
             };
 
-            // Return 201 Created (Location header might be less critical here)
-            // We could create a GetSetById if needed for the location.
             return StatusCode(201, setDto);
         }
-
-        // We could add GET endpoints for sets too if needed, similar to exercises
-
-        // --- DELETE Endpoints ---
 
         // DELETE: api/trainingsessions/{id}
         [HttpDelete("{id}")]
@@ -344,7 +316,6 @@ namespace FitnessApp.Api.Controllers
         {
             var userId = GetCurrentUserId();
 
-            // Găsim sesiunea (nu e nevoie să includem copii, îi șterge în cascadă EF)
             var sessionToDelete = await _context.TrainingSessions
                                         .FirstOrDefaultAsync(ts => ts.Id == id && ts.UserId == userId);
 
@@ -357,12 +328,12 @@ namespace FitnessApp.Api.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException /* ex */)
+            catch (DbUpdateException)
             {
                 return StatusCode(500, "An error occurred while deleting the training session.");
             }
 
-            return NoContent(); // Standard pentru DELETE reușit
+            return NoContent();
         }
 
         // DELETE: api/trainingsessions/{sessionId}/exercises/{exerciseId}
@@ -371,7 +342,6 @@ namespace FitnessApp.Api.Controllers
         {
             var userId = GetCurrentUserId();
 
-            // Find the exercise, ensuring it's in the correct session owned by the user
             var exercise = await _context.Exercises
                                    .FirstOrDefaultAsync(e => e.Id == exerciseId && e.TrainingSessionId == sessionId && e.TrainingSession.UserId == userId);
 
@@ -392,7 +362,6 @@ namespace FitnessApp.Api.Controllers
         {
             var userId = GetCurrentUserId();
 
-            // Find the set, ensuring it's in the correct exercise within the correct session owned by the user
             var set = await _context.ExerciseSets
                                 .FirstOrDefaultAsync(s => s.Id == setId && s.ExerciseId == exerciseId && s.Exercise.TrainingSessionId == sessionId && s.Exercise.TrainingSession.UserId == userId);
 
@@ -406,8 +375,6 @@ namespace FitnessApp.Api.Controllers
 
             return NoContent();
         }
-
-        // --- PUT Endpoints ---
 
         // PUT: api/trainingsessions/{id}
         [HttpPut("{id}")]
@@ -423,38 +390,29 @@ namespace FitnessApp.Api.Controllers
                 return NotFound();
             }
 
-            // Ștergem exercițiile și seturile vechi (strategie simplă)
-            // Atenție: Aceasta poate fi ineficientă. O strategie de update ar fi mai bună.
-            foreach (var exercise in existingSession.Exercises.ToList()) // Iterăm pe copie
+            foreach (var exercise in existingSession.Exercises.ToList())
             {
                 _context.ExerciseSets.RemoveRange(exercise.Sets);
                 _context.Exercises.Remove(exercise);
             }
-            // Am putea face SaveChanges aici sau la final
 
-            // Actualizăm datele sesiunii
             existingSession.Date = updateDto.Date.Date;
             existingSession.Notes = updateDto.Notes;
 
-            // Adăugăm noile exerciții și seturi (mapaj similar cu cel de la POST)
             existingSession.Exercises = updateDto.Exercises.Select(exDto => new Exercise
             {
                 Name = exDto.Name,
                 Notes = exDto.Notes,
-                Sets = Enumerable.Range(1, exDto.Sets > 0 ? exDto.Sets : 1) // Generează numere de la 1 la exDto.Sets (minim 1)
+                Sets = Enumerable.Range(1, exDto.Sets > 0 ? exDto.Sets : 1)
                                  .Select(setNum =>
                                  {
-                                     // --- Remove DEBUG LOGGING and parsing ---
-                                     Console.WriteLine($"[DEBUG] Updating/Creating Set {setNum} for Exercise '{exDto.Name}'"); // Keep for now
-                                     // bool repsParsed = int.TryParse(exDto.Reps?.Trim(), out int reps); // Remove parsing
-                                     bool weightParsed = double.TryParse(exDto.Weight?.Trim(), out double weight); // Keep weight parsing
-                                     // Console.WriteLine($"[DEBUG]   Reps Parsed: {repsParsed}, Value: {(repsParsed ? reps : 0)}");
+                                     Console.WriteLine($"[DEBUG] Updating/Creating Set {setNum} for Exercise '{exDto.Name}'");
+                                     bool weightParsed = double.TryParse(exDto.Weight?.Trim(), out double weight);
                                      Console.WriteLine($"[DEBUG]   Weight Parsed: {weightParsed}, Value: {(weightParsed ? weight : 0.0)}");
 
                                      return new ExerciseSet
                                      {
-                                         SetNumber = setNum, // Folosește numărul generat
-                                         // Assign string directly, ensuring it's not null
+                                         SetNumber = setNum,
                                          Repetitions = exDto.Reps?.Trim() ?? string.Empty,
                                          Weight = weightParsed ? weight : 0.0
                                      };
@@ -466,12 +424,12 @@ namespace FitnessApp.Api.Controllers
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException) { throw; }
-            catch (DbUpdateException /* ex */)
+            catch (DbUpdateException)
             {
                 return StatusCode(500, "An error occurred while updating the training session.");
             }
 
-            return NoContent(); // Standardul pentru PUT reușit fără conținut returnat
+            return NoContent();
         }
 
         // PUT: api/trainingsessions/{sessionId}/exercises/{exerciseId}
@@ -488,7 +446,6 @@ namespace FitnessApp.Api.Controllers
                 return NotFound();
             }
 
-            // Update properties
             exercise.Name = updateDto.Name;
             exercise.Notes = updateDto.Notes;
 
@@ -525,9 +482,8 @@ namespace FitnessApp.Api.Controllers
                 return NotFound();
             }
 
-            // Update properties
             set.SetNumber = updateDto.SetNumber;
-            set.Repetitions = updateDto.Repetitions?.Trim() ?? string.Empty; // Assign string directly
+            set.Repetitions = updateDto.Repetitions?.Trim() ?? string.Empty;
             set.Weight = updateDto.Weight;
 
             try
@@ -549,7 +505,6 @@ namespace FitnessApp.Api.Controllers
             return NoContent();
         }
 
-        // --- Alte Endpoints (GET Id, Month etc.) ---
 
         // GET: api/trainingsessions/month?month=X&year=Y
         [HttpGet("month")]
@@ -561,14 +516,12 @@ namespace FitnessApp.Api.Controllers
 
             var dates = await _context.TrainingSessions
                 .Where(ts => ts.UserId == userId && ts.Date >= startDate && ts.Date < endDate)
-                .Select(ts => ts.Date.Date) // Selectăm doar data
-                .Distinct() // Luăm doar datele unice
+                .Select(ts => ts.Date.Date)
+                .Distinct()
                 .ToListAsync();
 
             return Ok(dates);
         }
-
-        // Funcție privată de mapare pentru a evita repetiția
         private static System.Linq.Expressions.Expression<Func<TrainingSession, TrainingSessionDetailDto>> MapToDetailDto()
         {
             return ts => new TrainingSessionDetailDto

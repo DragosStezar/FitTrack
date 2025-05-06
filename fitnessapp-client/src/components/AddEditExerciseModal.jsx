@@ -3,66 +3,54 @@ import styles from './AddEditExerciseModal.module.css';
 
 
 function AddEditExerciseModal({ isOpen, onClose, onSubmit, exerciseToEdit }) {
-    // State local pentru câmpurile formularului
     const [name, setName] = useState('');
-    const [sets, setSets] = useState(''); // Stocat ca string pentru input type="number"
-    const [reps, setReps] = useState(''); // Stocat ca string (backend vrea string)
-    const [weight, setWeight] = useState(''); // Stocat ca string (backend vrea string?)
-    const [duration, setDuration] = useState(''); // Stocat ca string (backend vrea string?)
-    const [notes, setNotes] = useState(''); // Adăugăm state pentru Notes
+    const [sets, setSets] = useState('');
+    const [reps, setReps] = useState('');
+    const [weight, setWeight] = useState('');
+    const [duration, setDuration] = useState('');
+    const [notes, setNotes] = useState('');
     const [isEditMode, setIsEditMode] = useState(false);
 
-    // Efect pentru a pre-popula formularul când se editează un exercițiu
     useEffect(() => {
-        // Presupunem că exerciseToEdit are acum structura ExerciseInputDto
         if (exerciseToEdit) {
             setIsEditMode(true);
             setName(exerciseToEdit.name || '');
-            // Backend așteaptă int pt Sets, string pt Reps, string? pt Weight/Duration/Notes
-            setSets((exerciseToEdit.sets || 1).toString()); // Convertim nr. seturi în string pt input
+            setSets((exerciseToEdit.sets || 1).toString());
             setReps(exerciseToEdit.reps || '');
             setWeight(exerciseToEdit.weight || '');
             setDuration(exerciseToEdit.duration || '');
-            setNotes(exerciseToEdit.notes || ''); // Setăm notes
+            setNotes(exerciseToEdit.notes || '');
         } else {
-            // Reset form for adding new exercise
             setIsEditMode(false);
             setName('');
-            setSets('1'); // Default la 1 set (ca string)
+            setSets('1');
             setReps('');
             setWeight('');
             setDuration('');
-            setNotes(''); // Resetăm notes
+            setNotes('');
         }
-        // Depindem doar de exerciseToEdit pentru a repopula
     }, [exerciseToEdit]);
 
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        // Construim obiectul exerciseData conform structurii ExerciseInputDto
         const exerciseData = {
-            id: isEditMode ? exerciseToEdit.id : `temp-${Date.now()}`, // Păstrăm id temporar/existent pt frontend
+            id: isEditMode ? exerciseToEdit.id : `temp-${Date.now()}`,
             name: name,
-            sets: parseInt(sets, 10) || 1, // Convertim înapoi în int
-            reps: reps, // Trimitem string
-            // Trimitem string gol dacă inputul e gol, sau valoarea. Backend acceptă string?
-            weight: weight || null, // Trimitem null dacă e gol, altfel stringul
-            duration: duration || null, // Trimitem null dacă e gol, altfel stringul
-            notes: notes || null // Trimitem null dacă e gol, altfel stringul
+            sets: parseInt(sets, 10) || 1,
+            reps: reps,
+            weight: weight || null,
+            duration: duration || null,
+            notes: notes || null
         };
 
-        // Verificări simple opționale (de ex. pt sets > 0) pot fi adăugate aici
-
-        onSubmit(exerciseData); // Trimitem datele structurate corect
+        onSubmit(exerciseData);
     };
 
-    // Nu randa nimic dacă modalul nu e deschis
     if (!isOpen) {
         return null;
     }
 
-    // Închide la click pe overlay
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
             onClose();
@@ -70,9 +58,8 @@ function AddEditExerciseModal({ isOpen, onClose, onSubmit, exerciseToEdit }) {
     };
 
     return (
-        // Overlay-ul modalului
         <div className={styles.modalOverlay} onClick={handleOverlayClick}>
-            {/* Conținutul modalului */}
+            { }
             <div className={styles.modalContent}>
                 <h2>{isEditMode ? 'Edit Exercise' : 'Add New Exercise'}</h2>
                 <form onSubmit={handleSubmit} className={styles.exerciseForm}>
@@ -145,7 +132,7 @@ function AddEditExerciseModal({ isOpen, onClose, onSubmit, exerciseToEdit }) {
                             onChange={(e) => setNotes(e.target.value)}
                             placeholder="e.g., Focus on form"
                             rows="3"
-                            className={styles.notesTextarea} // Adaugă o clasă specifică dacă e necesar
+                            className={styles.notesTextarea}
                         />
                     </div>
 

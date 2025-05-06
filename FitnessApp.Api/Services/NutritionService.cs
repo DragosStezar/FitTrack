@@ -117,7 +117,7 @@ namespace FitnessApp.Api.Services
                 case ActivityLevel.ExtraActive:
                     return 1.9;
                 default:
-                    return 1.2; // Default to Sedentary
+                    return 1.2;
             }
         }
     }

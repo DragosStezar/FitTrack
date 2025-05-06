@@ -1,8 +1,7 @@
 import React from 'react';
-import styles from './HomePage.module.css'; // Import CSS Module
-import { Link } from 'react-router-dom'; // Pentru butonul "Începe acum"
-import { useAuth } from '../context/AuthContext'; // Import useAuth
-// Import Material Design icons
+import styles from './HomePage.module.css';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { MdPerson, MdFitnessCenter, MdShowChart } from "react-icons/md";
 
 function HomePage() {
@@ -10,7 +9,7 @@ function HomePage() {
 
     return (
         <div className={styles.pageContainer}>
-            {/* Hero Section */}
+            { }
             <section className={styles.heroSection}>
                 <h1 className={styles.heroTitle}>
                     Organizează-ți progresul.<br />Antrenează-ți viitorul.
@@ -18,7 +17,7 @@ function HomePage() {
                 <p className={styles.heroSubtitle}>
                     Planifică-ți antrenamentele și nutriția într-un singur loc.
                 </p>
-                {/* Conditional button based on login status */}
+                { }
                 {isLoggedIn ? (
                     <Link to="/workouts">
                         <button className={styles.heroButton}>View Workouts</button>
@@ -29,12 +28,9 @@ function HomePage() {
                     </Link>
                 )}
             </section>
-
-            {/* Features Section */}
             <section className={styles.featuresSection}>
                 <h2 className={styles.featuresTitle}>Cum funcționează</h2>
                 <div className={styles.featuresGrid}>
-                    {/* Feature 1: Creează cont */}
                     <div className={styles.featureItem}>
                         <div className={styles.featureIconPlaceholder}>
                             <MdPerson />
@@ -45,7 +41,6 @@ function HomePage() {
                         </p>
                     </div>
 
-                    {/* Feature 2: Loghează antrenamente */}
                     <div className={styles.featureItem}>
                         <div className={styles.featureIconPlaceholder}>
                             <MdFitnessCenter />
@@ -56,7 +51,6 @@ function HomePage() {
                         </p>
                     </div>
 
-                    {/* Feature 3: Urmărește progresul */}
                     <div className={styles.featureItem}>
                         <div className={styles.featureIconPlaceholder}>
                             <MdShowChart />

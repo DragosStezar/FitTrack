@@ -1,15 +1,11 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
-// import axios from 'axios'; // <-- Nu mai folosim axios global direct
-import axiosInstance from '../api/axiosInstance'; // <-- Importăm instanța configurată
+import axiosInstance from '../api/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-// const API_URL = 'http://localhost:5276/api'; // <-- Eliminăm URL-ul hardcodat
 
-// Create the context
 const AuthContext = createContext(null);
 
-// Custom hook to use the auth context easily
 export const useAuth = () => {
     return useContext(AuthContext);
 };
@@ -23,47 +19,40 @@ export const AuthProvider = ({ children }) => {
             return storedUserInfo ? JSON.parse(storedUserInfo) : null;
         } catch (error) {
             console.error("Failed to parse user info from localStorage", error);
-            localStorage.removeItem('userInfo'); // Clear corrupted data
+            localStorage.removeItem('userInfo');
             return null;
         }
     });
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Effect to update axios headers when token changes - ACUM FOLOSEȘTE axiosInstance!
     useEffect(() => {
         if (authToken) {
-            // Setăm header-ul pe instanța folosită pentru request-uri
             axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
         } else {
             delete axiosInstance.defaults.headers.common['Authorization'];
         }
     }, [authToken]);
 
-    // Logout function - încadrat în useCallback
     const logout = useCallback(() => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('userInfo');
         setAuthToken(null);
         setUserInfo(null);
-        // Stergem header-ul la logout
         delete axiosInstance.defaults.headers.common['Authorization'];
         navigate('/login');
-        // Dependințe: navigate
     }, [navigate]);
 
-    // Funcție nouă pentru a reîncărca datele utilizatorului
     const refreshUserInfo = useCallback(async () => {
         const currentToken = localStorage.getItem('authToken');
         if (!currentToken) {
             console.log("[refreshUserInfo] No auth token found in localStorage.");
             delete axiosInstance.defaults.headers.common['Authorization'];
-            return; // Nu setăm isLoading dacă nu facem request
+            return;
         }
 
-        setIsLoading(true); // <-- Setăm isLoading true la început
+        setIsLoading(true);
 
-        // Setăm explicit header-ul pe instanță ÎNAINTE de request
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${currentToken}`;
 
         try {
@@ -83,14 +72,12 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error('[refreshUserInfo] Error caught during refresh:', error);
         } finally {
-            setIsLoading(false); // <-- Setăm isLoading false indiferent de rezultat
+            setIsLoading(false);
         }
-    }, [logout]); // `logout` este dependență pentru cazul 401 din interceptor
+    }, [logout]);
 
-    // Login function - ACUM FOLOSEȘTE axiosInstance!
     const login = useCallback(async (loginCredentials) => {
         try {
-            // Folosim axiosInstance care are baseURL='/api' și interceptori
             const response = await axiosInstance.post(`/auth/login`, loginCredentials);
             if (response.data.token) {
                 const token = response.data.token;
@@ -114,7 +101,6 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // External Login function - încadrat în useCallback
     const handleExternalLogin = useCallback((token) => {
         if (!token) {
             console.error("[AuthContext] No token provided to handleExternalLogin");
@@ -124,7 +110,6 @@ export const AuthProvider = ({ children }) => {
         try {
             console.log("[AuthContext] Processing external token");
 
-            // Decodăm token-ul
             let decoded;
             try {
                 decoded = jwtDecode(token);
@@ -134,14 +119,12 @@ export const AuthProvider = ({ children }) => {
                 return false;
             }
 
-            // Verificăm validitatea token-ului
             const currentTime = Date.now() / 1000;
             if (decoded.exp && decoded.exp < currentTime) {
                 console.error("[AuthContext] Token has expired");
                 return false;
             }
 
-            // Extragem informațiile utilizatorului din token
             const userData = {
                 username: decoded.unique_name || decoded.name || decoded.email?.split('@')[0] || 'User',
                 email: decoded.email || 'N/A',
@@ -151,15 +134,12 @@ export const AuthProvider = ({ children }) => {
 
             console.log("[AuthContext] Extracted user data:", userData);
 
-            // Salvăm datele în localStorage și state
             localStorage.setItem('authToken', token);
             localStorage.setItem('userInfo', JSON.stringify(userData));
 
-            // Setăm datele în context
             setAuthToken(token);
             setUserInfo(userData);
 
-            // Actualizăm și header-ul Authorization pentru request-uri
             axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
             console.log("[AuthContext] External authentication successful");
@@ -174,7 +154,6 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // Value provided by the context
     const value = {
         authToken,
         userInfo,

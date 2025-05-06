@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'; // Importă hook-ul customizat
 function AuthCallback() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { handleExternalLogin } = useAuth(); // Folosește hook-ul pentru a accesa funcția
+    const { handleExternalLogin } = useAuth();
     const [error, setError] = useState('');
     const [status, setStatus] = useState('Processing authentication...');
 
@@ -45,7 +45,6 @@ function AuthCallback() {
         processAuth();
     }, [searchParams, navigate, handleExternalLogin]);
 
-    // Afișăm un mesaj de încărcare sau eroare
     return (
         <div style={{
             display: 'flex',
