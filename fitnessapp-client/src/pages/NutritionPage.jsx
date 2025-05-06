@@ -80,9 +80,12 @@ function NutritionPage() {
             setFormData(prev => ({ ...prev, gender: parseInt(value) }));
         } else {
             let processedValue;
-            if (name === 'targetWeightKg' && value === '') {
+            const stringWhenEmptyNumericFields = ['age', 'heightCm', 'weightKg', 'targetWeightKg'];
+            const allNumericFields = ['age', 'heightCm', 'weightKg', 'targetWeightKg', 'activityLevel'];
+
+            if (stringWhenEmptyNumericFields.includes(name) && value === '') {
                 processedValue = '';
-            } else if (name === 'age' || name === 'heightCm' || name === 'weightKg' || name === 'activityLevel' || name === 'targetWeightKg') {
+            } else if (allNumericFields.includes(name)) {
                 processedValue = Number(value);
             } else {
                 processedValue = value;
