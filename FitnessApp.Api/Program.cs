@@ -14,17 +14,14 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 
-// Determine the path to the root directory of the project and load .env file
 string projectRootPath = Directory.GetParent(Directory.GetCurrentDirectory())!.FullName;
 string envPath = Path.Combine(projectRootPath, ".env");
 Env.Load(envPath);
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS Policy Name
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-// Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -49,6 +46,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<StripeService>();
 builder.Services.AddScoped<NutritionService>();
+
+builder.Services.AddHttpClient("GeminiApiClient");
+builder.Services.AddScoped<GeminiMealPlanService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -100,7 +100,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-    options.CallbackPath = "/signin-google";  // must match Google Cloud Authorized redirect URI
+    options.CallbackPath = "/signin-google";
 
     options.CorrelationCookie.SameSite = SameSiteMode.Lax;
     options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;

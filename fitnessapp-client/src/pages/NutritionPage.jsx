@@ -34,6 +34,11 @@ function NutritionPage() {
     const [error, setError] = useState('');
     const [isNewProfile, setIsNewProfile] = useState(false);
 
+    // Stări noi pentru planul alimentar AI
+    const [aiMealPlan, setAiMealPlan] = useState(null);
+    const [isGeneratingMealPlan, setIsGeneratingMealPlan] = useState(false);
+    const [mealPlanError, setMealPlanError] = useState('');
+
     const fetchProfile = useCallback(async () => {
         setIsLoading(true);
         setError('');
@@ -135,6 +140,49 @@ function NutritionPage() {
             }
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleGenerateMealPlan = async () => {
+        if (!nutritionData || !profileData) {
+            setMealPlanError('Datele nutriționale și de profil sunt necesare pentru a genera un plan.');
+            return;
+        }
+
+        setIsGeneratingMealPlan(true);
+        setAiMealPlan(null);
+        setMealPlanError('');
+
+        const planRequestData = {
+            goalCalories: nutritionData.goalCalories,
+            proteinGrams: nutritionData.proteinGrams,
+            carbGrams: nutritionData.carbGrams,
+            fatGrams: nutritionData.fatGrams,
+            dietaryGoal: getDerivedGoalText(profileData.weightKg, profileData.targetWeightKg),
+            preferences: formData.preferences || '',
+        };
+
+        console.log("Trimitere cerere către /api/mealplan/generate cu datele:", planRequestData);
+
+        try {
+            const response = await axiosInstance.post('mealplan/generate', planRequestData);
+
+            if (response.data && response.data.success) {
+                setAiMealPlan(response.data.mealPlanText);
+            } else {
+                setMealPlanError(response.data?.errorMessage || 'A apărut o eroare la generarea planului alimentar din backend.');
+            }
+        } catch (err) {
+            console.error("Eroare la apelarea /api/mealplan/generate:", err);
+            let errorMessage = 'Serviciul de generare a planului alimentar nu a putut fi contactat. Te rugăm să încerci din nou.';
+            if (err.response && err.response.data) {
+                errorMessage = err.response.data.errorMessage || err.response.data.message || errorMessage;
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+            setMealPlanError(errorMessage);
+        } finally {
+            setIsGeneratingMealPlan(false);
         }
     };
 
@@ -309,6 +357,26 @@ function NutritionPage() {
                                     <span className={styles.macroLabel}>Fat</span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div className={styles.aiMealPlanSection}>
+                            <h3>Plan Alimentar Personalizat (AI)</h3>
+                            <button
+                                onClick={handleGenerateMealPlan}
+                                disabled={isGeneratingMealPlan || !nutritionData}
+                                className={styles.generatePlanButton}
+                            >
+                                {isGeneratingMealPlan ? 'Se generează...' : 'Generează Plan Alimentar'}
+                            </button>
+
+                            {isGeneratingMealPlan && <div className={styles.loading}>Se încarcă recomandările AI...</div>}
+                            {mealPlanError && <div className={`${styles.error} ${styles.mealPlanError}`}>{mealPlanError}</div>}
+                            {aiMealPlan && (
+                                <div className={styles.mealPlanDisplay}>
+                                    <h4>Recomandare Plan Alimentar:</h4>
+                                    <pre className={styles.mealPlanText}>{aiMealPlan}</pre>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

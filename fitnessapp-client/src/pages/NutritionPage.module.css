@@ -287,15 +287,120 @@
     }
 }
 
-/* Hide number input spinners (arrows) */
-/* Chrome, Safari, Edge, Opera */
 .formGroup input[type=number]::-webkit-outer-spin-button,
 .formGroup input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-/* Firefox */
 .formGroup input[type=number] {
     -moz-appearance: textfield;
+    /* Pentru Firefox */
+    appearance: textfield;
+    /* Proprietatea standard */
+}
+
+.aiMealPlanSection {
+    margin-top: 2rem;
+    /* Spațiere similară cu alte secțiuni mari */
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color, #e0e0e0);
+    /* Folosește o variabilă dacă ai, altfel un gri deschis */
+}
+
+.aiMealPlanSection h3 {
+    font-size: 1.5em;
+    /* Similar cu alte titluri de secțiune, ex: Daily Nutrition Goals */
+    color: var(--text-primary, #333);
+    margin-bottom: 1rem;
+}
+
+.generatePlanButton {
+    /* Inspirat de .saveButton sau alte butoane primare */
+    background-color: var(--primary-button-bg, #007bff);
+    /* Culoare primară (ex: albastru, verde) */
+    color: var(--primary-button-text, white);
+    padding: 0.75em 1.5em;
+    border: none;
+    border-radius: var(--border-radius-medium, 5px);
+    /* Folosește un border-radius consistent */
+    font-size: 1em;
+    /* Sau dimensiunea standard a butoanelor tale */
+    font-weight: 500;
+    /* Sau greutatea fontului butoanelor tale */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    /* Permite margin-bottom și nu ocupă toată lățimea */
+    box-shadow: var(--button-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.generatePlanButton:hover:not(:disabled) {
+    background-color: var(--primary-button-hover-bg, #0056b3);
+    /* O nuanță mai închisă a culorii primare */
+    box-shadow: var(--button-hover-shadow, 0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.generatePlanButton:disabled {
+    background-color: var(--button-disabled-bg, #cccccc);
+    color: var(--button-disabled-text, #666666);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* .loading este probabil deja definit, dar dacă nu: */
+.loading {
+    color: var(--text-secondary, #555);
+    margin-top: 1rem;
+    font-style: italic;
+}
+
+.mealPlanError {
+    /* Folosește stilul de .error existent dacă se potrivește */
+    color: var(--error-text-color, #D8000C);
+    /* Culoarea standard pentru erori */
+    background-color: var(--error-bg-color, #FFD2D2);
+    /* Fundal deschis pentru erori */
+    padding: 0.75em 1em;
+    border-radius: var(--border-radius-medium, 5px);
+    margin-top: 1rem;
+    border: 1px solid var(--error-border-color, #D8000C);
+}
+
+.mealPlanDisplay {
+    margin-top: 1.5rem;
+    background-color: var(--card-bg, #ffffff);
+    /* Fundalul cardurilor tale */
+    padding: 1.5rem;
+    border-radius: var(--border-radius-large, 8px);
+    /* Un radius mai mare pentru carduri de conținut */
+    border: 1px solid var(--border-color, #e0e0e0);
+    box-shadow: var(--card-shadow, 0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.mealPlanDisplay h4 {
+    font-size: 1.25em;
+    color: var(--text-primary, #333);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color-light, #f0f0f0);
+    padding-bottom: 0.75rem;
+}
+
+.mealPlanText {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: var(--font-family-monospace, 'Courier New', Courier, monospace);
+    /* O fontă mono consistentă */
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--text-secondary, #454545);
+    background-color: var(--code-bg, #f7f7f9);
+    /* Un fundal foarte deschis pentru blocul de text */
+    padding: 1rem;
+    border-radius: var(--border-radius-small, 4px);
+    border: 1px solid var(--border-color-light, #f0f0f0);
+    overflow-x: auto;
+    /* Scroll orizontal dacă textul e prea lung */
 }
