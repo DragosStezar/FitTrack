@@ -5,13 +5,11 @@ import AddEditExerciseModal from './AddEditExerciseModal';
 import { FaPlus } from 'react-icons/fa';
 import axiosInstance from '../api/axiosInstance';
 
-// Funcție helper pentru a compara datele ignorând ora
 const isSameDay = (date1, date2) =>
     date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate();
 
-// Funcție helper pentru a formata data în YYYY-MM-DD
 const formatDateForApi = (date) => {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -19,8 +17,6 @@ const formatDateForApi = (date) => {
     return `${year}-${month}-${day}`;
 };
 
-// Funcție helper pentru a transforma datele primite de la API (cu array de sets)
-// în structura folosită de starea frontend (cu proprietăți directe)
 const transformWorkoutDataFromApi = (apiData) => {
     console.log("[transformWorkoutDataFromApi] Received API data:", apiData);
     if (!apiData) {
@@ -29,32 +25,22 @@ const transformWorkoutDataFromApi = (apiData) => {
     }
 
     const transformedExercises = apiData.exercises.map(ex => {
-        // Extragem datele din primul set pentru reps/weight/duration
-        // Convertim în string pentru consistență cu starea modalului/inputurilor
         const firstSet = ex.sets && ex.sets.length > 0 ? ex.sets[0] : null;
         const reps = firstSet ? firstSet.repetitions : '';
-        // Atenție: Backend trimite weight ca double. Îl convertim în string.
-        // Afișăm '' dacă e 0 sau null? Sau lăsăm 0? Să păstrăm valoarea ca string.
         const weight = firstSet && firstSet.weight != null ? firstSet.weight.toString() : '';
-        // TODO: Adaugă duration dacă backend-ul îl trimite în ExerciseSetDto
-        // const duration = firstSet ? firstSet.duration?.toString() ?? '' : '';
-        const duration = ''; // Placeholder
+        const duration = '';
 
         return {
-            // Folosim ID-ul real de la backend pentru exercițiu
             id: ex.id,
             name: ex.name,
             notes: ex.notes,
-            // Folosim numărul de seturi returnate de backend
             sets: ex.sets ? ex.sets.length : 0,
-            // Folosim valorile extrase/convertite
             reps: reps,
             weight: weight,
             duration: duration,
         };
     });
 
-    // Returnăm obiectul workout transformat
     const result = {
         id: apiData.id,
         // Convertim data în obiect Date
@@ -175,48 +161,35 @@ function WorkoutDetails({ date }) {
         setIsSaving(true);
         setError(null);
 
-        // Pregătim datele pentru trimitere - structura este acum mult mai simplă
-        // Starea `workout.exercises` ar trebui să conțină deja obiecte compatibile cu ExerciseInputDto
         const exercisesToSend = workout.exercises.map(ex => {
-            // Eliminăm doar ID-ul temporar/frontend specific
             const { id, ...restOfExercise } = ex;
-            // Returnăm restul proprietăților care corespund ExerciseInputDto
-            return restOfExercise; // { name, sets, reps, weight, duration, notes }
+            return restOfExercise;
         });
 
         const workoutDataToSend = {
-            // Trimitem data formatată corect
             date: formatDateForApi(workout.date),
-            // Trimitem lista de exerciții curățată (fără ID-uri temporare)
             exercises: exercisesToSend,
-            // TODO: Adaugă notes la nivel de sesiune dacă e cazul
-            // notes: workout.notes // (dacă ai adăuga un câmp de notițe pt tot antrenamentul)
         };
 
         console.log("Data being sent to API (simplified):", workoutDataToSend);
 
         try {
             let response;
-            // Folosim ID-ul sesiunii stocat în state (dacă există și nu e temporar)
             const sessionId = workout.id && !workout.id.startsWith('new-sess-') ? workout.id : null;
 
             if (sessionId) {
                 console.log("Updating workout:", sessionId, workoutDataToSend);
                 response = await axiosInstance.put(`/trainingsessions/${sessionId}`, workoutDataToSend);
                 console.log("Workout updated successfully, status:", response.status);
-                // NU mai procesăm response.data, vom re-fetch-ui
             } else {
                 console.log("Creating new workout:", workoutDataToSend);
                 response = await axiosInstance.post('/trainingsessions', workoutDataToSend);
                 console.log("Workout created successfully, status:", response.status, "Response data:", response.data);
-                // NU mai procesăm response.data, vom re-fetch-ui
             }
             alert("Workout saved!");
 
-            // Re-fetch workout details to get the latest data including IDs from backend
             console.log("Re-fetching workout details after save...");
-            await fetchWorkoutDetails(); // Asigură-te că fetchWorkoutDetails este async sau gestionează promisiunea
-
+            await fetchWorkoutDetails();
         } catch (err) {
             console.error("Error saving workout:", err);
             setError("Failed to save workout. Please try again.");
