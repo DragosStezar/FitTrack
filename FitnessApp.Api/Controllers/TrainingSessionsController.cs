@@ -48,6 +48,7 @@ namespace FitnessApp.Api.Controllers
                 {
                     Name = exDto.Name,
                     Notes = exDto.Notes,
+                    Duration = exDto.Duration,
                     Sets = Enumerable.Range(1, exDto.Sets > 0 ? exDto.Sets : 1)
                                      .Select(setNum =>
                                      {
@@ -155,6 +156,7 @@ namespace FitnessApp.Api.Controllers
                         Id = e.Id,
                         Name = e.Name,
                         Notes = e.Notes,
+                        Duration = e.Duration,
                         Sets = e.Sets.OrderBy(s => s.SetNumber).Select(s => new ExerciseSetDto
                         {
                             Id = s.Id,
@@ -403,6 +405,7 @@ namespace FitnessApp.Api.Controllers
             {
                 Name = exDto.Name,
                 Notes = exDto.Notes,
+                Duration = exDto.Duration,
                 Sets = Enumerable.Range(1, exDto.Sets > 0 ? exDto.Sets : 1)
                                  .Select(setNum =>
                                  {
@@ -534,6 +537,7 @@ namespace FitnessApp.Api.Controllers
                     Id = e.Id,
                     Name = e.Name,
                     Notes = e.Notes,
+                    Duration = e.Duration,
                     Sets = e.Sets.OrderBy(s => s.SetNumber).Select(s => new ExerciseSetDto
                     {
                         Id = s.Id,

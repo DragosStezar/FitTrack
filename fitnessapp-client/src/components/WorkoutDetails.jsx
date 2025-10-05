@@ -28,16 +28,15 @@ const transformWorkoutDataFromApi = (apiData) => {
         const firstSet = ex.sets && ex.sets.length > 0 ? ex.sets[0] : null;
         const reps = firstSet ? firstSet.repetitions : '';
         const weight = firstSet && firstSet.weight != null ? firstSet.weight.toString() : '';
-        const duration = '';
 
         return {
             id: ex.id,
             name: ex.name,
             notes: ex.notes,
+            duration: ex.duration,
             sets: ex.sets ? ex.sets.length : 0,
             reps: reps,
             weight: weight,
-            duration: duration,
         };
     });
 
@@ -61,6 +60,7 @@ function WorkoutDetails({ date }) {
     const [editingExercise, setEditingExercise] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
 
     // Funcție pentru a prelua datele antrenamentului
     const fetchWorkoutDetails = useCallback(async () => {

@@ -70,7 +70,7 @@ namespace FitnessApp.Api.Services
         private readonly HttpClient _httpClient;
         private readonly string? _geminiApiKey;
         private readonly ILogger<GeminiMealPlanService> _logger;
-        private const string GeminiModelName = "gemini-1.5-flash-latest";
+        private const string GeminiModelName = "gemini-flash-latest";
         private readonly string _geminiApiEndpointUrl;
 
         public GeminiMealPlanService(IConfiguration configuration, IHttpClientFactory httpClientFactory, ILogger<GeminiMealPlanService> logger)
@@ -80,6 +80,7 @@ namespace FitnessApp.Api.Services
             _logger = logger;
 
             _geminiApiKey = _configuration["GEMINI:API:KEY"];
+            logger.LogInformation("Gemini API Key: {GeminiApiKey}", _geminiApiKey);
             if (string.IsNullOrEmpty(_geminiApiKey))
             {
                 _logger.LogError("Cheia API Gemini (GEMINI:API:KEY) nu este configurată.");

@@ -391,16 +391,8 @@
 .mealPlanText {
     white-space: pre-wrap;
     word-wrap: break-word;
-    font-family: var(--font-family-monospace, 'Courier New', Courier, monospace);
-    /* O fontă mono consistentă */
-    font-size: 0.9em;
+    font-family: sans-serif;
+    font-size: 1em;
     line-height: 1.6;
-    color: var(--text-secondary, #454545);
-    background-color: var(--code-bg, #f7f7f9);
-    /* Un fundal foarte deschis pentru blocul de text */
-    padding: 1rem;
-    border-radius: var(--border-radius-small, 4px);
-    border: 1px solid var(--border-color-light, #f0f0f0);
-    overflow-x: auto;
-    /* Scroll orizontal dacă textul e prea lung */
+    color: #454545;
 }
